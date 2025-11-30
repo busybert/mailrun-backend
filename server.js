@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import cors from "cors";
 import Stripe from "stripe";
@@ -8,9 +7,22 @@ import nodemailer from "nodemailer";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// -----------------------------
+// CORS — REQUIRED FOR FRONTEND
+// -----------------------------
+app.use(cors({
+  origin: [
+    "https://mailrun-orlando.com",
+    "http://localhost:5173"
+  ]
+}));
+
 app.use(express.json());
 
+// -----------------------------
+// INIT STRIPE
+// -----------------------------
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // -----------------------------
@@ -41,11 +53,18 @@ app.post("/api/checkout", async (req, res) => {
 });
 
 // -----------------------------
-// EMAIL ENDPOINT
+// EMAIL SENDING ENDPOINT
 // -----------------------------
 app.post("/api/send-email", async (req, res) => {
   try {
-    const { subject, message, name, phone, address, notes } = req.body;
+    const {
+      subject,
+      message,
+      name,
+      phone,
+      address,
+      notes
+    } = req.body;
 
     const transporter = nodemailer.createTransport({
       host: "smtp.hostinger.com",
@@ -68,7 +87,7 @@ Address: ${address}
 Notes: ${notes}
 
 ${message}
-`
+      `
     });
 
     res.json({ success: true });
@@ -80,15 +99,11 @@ ${message}
 });
 
 // -----------------------------
-// ROOT TEST ROUTE
+// BASIC STATUS CHECK
 // -----------------------------
 app.get("/", (req, res) => {
   res.send("MailRun Backend is running! ✔️");
 });
 
-// -----------------------------
 const port = process.env.PORT || 5000;
-
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+app.listen(port, () => console.log(`Server running on port ${port}`));
