@@ -1,3 +1,4 @@
+// server.js
 import express from "express";
 import cors from "cors";
 import Stripe from "stripe";
@@ -40,7 +41,7 @@ app.post("/api/checkout", async (req, res) => {
 });
 
 // -----------------------------
-// EMAIL SENDING ENDPOINT
+// EMAIL ENDPOINT
 // -----------------------------
 app.post("/api/send-email", async (req, res) => {
   try {
@@ -79,9 +80,15 @@ ${message}
 });
 
 // -----------------------------
+// ROOT TEST ROUTE
+// -----------------------------
 app.get("/", (req, res) => {
-  res.send("MailRun Backend is running!");
+  res.send("MailRun Backend is running! ✔️");
 });
 
+// -----------------------------
 const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
